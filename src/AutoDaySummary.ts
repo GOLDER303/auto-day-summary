@@ -1,6 +1,10 @@
 import fs from "fs"
 
-const TARGET_FILE_PATH = "2023-07-18.md"
+const TARGET_FILE_PATH = process.argv[2]
+if (!TARGET_FILE_PATH) {
+    console.error("You must provide target file path!")
+    process.exit(9)
+}
 
 try {
     const categoryMapFile = fs.readFileSync("CategoryMap.json")

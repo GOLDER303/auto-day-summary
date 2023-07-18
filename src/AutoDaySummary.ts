@@ -5,6 +5,7 @@ const TARGET_FILE_PATH = "2023-07-18.md"
 try {
     const categoryMapFile = fs.readFileSync("CategoryMap.json")
     const categoryMap = new Map<string, string>(Object.entries(JSON.parse(categoryMapFile.toString())))
+    categoryMap.set("OTH", "Other")
 
     const targetFile = fs.readFileSync(TARGET_FILE_PATH, "utf-8").toString()
 
@@ -35,6 +36,8 @@ try {
         }
     })
 
+    let activitiesDurations = new Map<string, number>()
+
     for (let i = 1; i < timeStamps.length; i++) {
         const [startHour, startMinute] = timeStamps[i - 1][1].split(":").map(Number)
         const [endHour, endMinute] = timeStamps[i][1].split(":").map(Number)
@@ -48,13 +51,27 @@ try {
         const timeDifference = Math.abs(endDate.getTime() - startDate.getTime())
         const minutesDifference = Math.floor(timeDifference / 1000 / 60)
 
-        const hours = Math.floor(minutesDifference / 60)
-        const minutes = minutesDifference % 60
+        const activityKey = timeStamps[i - 1][2]
 
-        lines[timeStamps[i - 1][0]] += ` -> ${hours} h ${minutes} min`
+        const currentDuration = activitiesDurations.get(activityKey)
+        activitiesDurations.set(activityKey, (currentDuration || 0) + minutesDifference)
+
+        lines[timeStamps[i - 1][0]] += ` -> ${formatMinutes(minutesDifference)}`
     }
 
-    fs.writeFileSync(TARGET_FILE_PATH, lines.join("\n"))
+    let summary = "\nSummary:\n"
+
+    activitiesDurations.forEach((duration, activityKey) => {
+        summary += `- ${categoryMap.get(activityKey)} -> ${duration} min = ${formatMinutes(duration)}\n`
+    })
+
+    fs.writeFileSync(TARGET_FILE_PATH, lines.join("\n") + summary)
 } catch (error) {
     console.error(error)
+}
+
+function formatMinutes(inputMinutes: number): string {
+    const hours = Math.floor(inputMinutes / 60)
+    const minutes = inputMinutes % 60
+    return `${hours} h ${minutes} min`
 }

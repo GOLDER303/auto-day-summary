@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@types/node": "^20.4.2",
+    "save-dev": "^0.0.1-security"
+  }
+}

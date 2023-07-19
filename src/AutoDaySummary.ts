@@ -13,15 +13,16 @@ try {
 
     const targetFile = fs.readFileSync(TARGET_FILE_PATH, "utf-8").toString()
 
-    const timePattern = /\d{1,2}:\d{2}/
-    let timeStamps: [number, string, string][] = []
-
     let lines: string[]
     if (targetFile.includes("\r")) {
         lines = targetFile.split("\r\n")
     } else {
         lines = targetFile.split("\n")
     }
+
+    const hasDurationPattern = / -> \d+ h \d+ min/
+    const timePattern = /\d{1,2}:\d{2}/
+    let timeStamps: [number, string, string][] = []
 
     lines.forEach((line, index) => {
         const match = line.match(timePattern)
@@ -34,7 +35,7 @@ try {
                 }
             })
 
-            if (!matchedKey) {
+            if (!matchedKey && !line.match(hasDurationPattern)) {
                 timeStamps.push([index, match[0], "OTH"])
             }
         }
@@ -58,6 +59,7 @@ try {
         const activityKey = timeStamps[i - 1][2]
 
         const currentDuration = activitiesDurations.get(activityKey)
+
         activitiesDurations.set(activityKey, (currentDuration || 0) + minutesDifference)
 
         lines[timeStamps[i - 1][0]] += ` -> ${formatMinutes(minutesDifference)}`

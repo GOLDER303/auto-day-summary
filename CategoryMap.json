@@ -1,6 +1,9 @@
 {
     "{P}": "Programming",
+    "{R}": "Research",
     "{CH}": "Chill",
     "{YT}": "YouTube",
-    "{SL}": "Stretching the legs"
+    "{SL}": "Stretching the legs",
+    "{E}": "Eating",
+    "{PF}": "Preparing Food"
 }

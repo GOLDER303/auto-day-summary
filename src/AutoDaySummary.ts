@@ -67,8 +67,12 @@ try {
 
     let summary = "\nSummary:\n"
 
-    activitiesDurations.forEach((duration, activityKey) => {
-        summary += `- ${categoryMap.get(activityKey)} -> ${duration} min = ${formatMinutes(duration)}\n`
+    categoryMap.forEach((activityName, activityKey) => {
+        const duration = activitiesDurations.get(activityKey)
+
+        if (duration) {
+            summary += `- ${activityName} -> ${duration} min = ${formatMinutes(duration)}\n`
+        }
     })
 
     fs.writeFileSync(TARGET_FILE_PATH, lines.join("\n") + summary)
